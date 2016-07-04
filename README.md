@@ -1,7 +1,5 @@
 # ModeConverter
-web数字谱大调式转调器 (vue2.0)
+web数字谱大调式转调器 (vue2.0 & ES6)
 
-输入检测 complete  
-输入格式化 incomplete  
-转调 complete  
-输出格式化 incomplete
+高低音表示：()与[]切换  
+未配对括号标签检测  

@@ -98,12 +98,6 @@
         // 转换方法, 接收转换字符和转换规则转换后输出转换后字符
         let strIndex;//定义待转音级下标容器
         for (let i = 0; i < indexMap.length; i++) {// 获取音级在逻辑音程表(indexMap)中的位置
-            // for (let j = 0; j < indexMap[i].length; j++) {
-            //   if (indexMap[i][j] === str) {
-            //     strIndex = i;
-            //     break;
-            //   }
-            // }
             let str2 = indexMap[i];
             strIndex = str2[0] === str | str2[1] === str ? i : null;
             if (strIndex !== null) {
