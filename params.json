@@ -1,6 +1,6 @@
 {
   "name": "Modeconverter",
   "tagline": "web数字谱大调式转调器 (vue2.0 & ES6)",
-  "body": "# ModeConverter\r\nweb数字谱大调式转调器 (vue2.0 & ES6)\r\n\r\n高低音表示：()与[]切换  \r\n未配对括号标签检测  \r\n",
+  "body": "# ModeConverter\r\nweb数字谱大调式转调器 (vue2.0 & ES6)\r\n[Demo](https://astlvk.github.io/ModeConverter/app.html)\r\n\r\n高低音表示：()与[]切换  \r\n未配对括号标签检测  \r\n\r\n#Info\r\n转调功能已可用  \r\n界面优化：incomplete  \r\n操作优化：incomplete\r\n",
   "note": "Don't delete this file! It's used internally to help with page regeneration."
 }
