@@ -49,7 +49,7 @@
         </div>
         <div class="xs6">
           <!-- 输出文本 -->
-          <textarea v-model="outputText" class="input" rows='20' readonly></textarea>
+          <textarea v-model="outputText" class="input" rows='20' ></textarea>
         </div>
       </div>
     </div>
@@ -69,24 +69,24 @@
           ['1', '#7'], ['#1', 'b2'], ['2', ''], ['#2', 'b3'], ['3', 'b4'], ['4', '#3'],
           ['#4', 'b5'], ['5', ''], ['#5', 'b6'], ['6', ''], ['#6', 'b7'], ['7', 'b1'],
         ],
-        indexMap2: [
-          {a: '1', b: '#7', i: 0}, {a: '#1', b: 'b2', i: 1}, {a: '2', b: '', i: 2},
-          {a: '#2', b: 'b3', i: 3}, {a: '3', b: 'b4', i: 4}, {a: '4', b: '#3', i: 5},
-          {a: '#4', b: 'b5', i: 6}, {a: '5', b: '', i: 7}, {a: '#5', b: 'b6', i: 8},
-          {a: '6', b: '', i: 9}, {a: '#6', b: 'b7', i: 10}, {a: '7', b: 'b1', i: '11'},
-        ],
-        // isBracket: true,
         isBracket: '[]',
         beforeMode: 0,
         afterMode: 0,
         inputText: '',
         outputText: '',
+        cacheText: '',
       }
     },
     methods: {
       start () {// button绑定的方法
-        this.inputCheck(this.inputText);
-        this.convert(this.inputFormat(this.inputText));
+        let cacheText = this.baseFormat(this.inputText);
+        let cacheTextArr = cacheText.match(/((#|b)[1-7])|[1-7]|.|\n/g);
+        let inputTextArr = this.inputText.match(/((#|b)[1-7])|[1-7]|.|\n/g);
+        let pairResult = this.pairCheck(cacheTextArr);
+        let ok = this.inputCheck(inputTextArr, pairResult);
+        cacheText = this.inputFormat(cacheTextArr, pairResult);
+        cacheText = this.convert(cacheText);
+        this.outputText = this.outputFormat(cacheText);
       },
       convert (text) {
         return text.replace(/((#|b)[1-7])|[1-7]/g, str => {
@@ -140,48 +140,73 @@
           return str === '（' ? '(' : str === '【' ? '[' : str === '）' ? ')' : str === '】' ? ']' : 'Format error';
         });
       },
-      inputCheck (inputText) {//检查输入谱是否有未配对括号标签, 如果有则提示，且标识出大致位置.
-        let cacheText = this.baseFormat(inputText);
-        const textArr = [...cacheText];//转成数组.
-        const stack1 = [], stack2 = [], error1 = [], error2 = [];
+      pairCheck (textArr) {//检查输入谱是否有未配对括号标签, 如果有则提示，且标识出大致位置.并存入根配对标签下标。
+        const stack1 = [], stack2 = [], error1 = [], error2 = [], save = [];
         for (let i = 0; i < textArr.length; i++) {//配对括号标签
           switch (textArr[i]) {
             case '[':
               stack1.push(i);
               break;
             case ']':
+              stack1.length == 1 ? save.push({prefix: stack1[0], suffix: i}) : {};
               stack1.length > 0 ? stack1.pop() : error1.push(i);
               break;
             case '(':
               stack2.push(i);
               break;
             case ')':
-              stack2.length > 0 ? stack2.pop() : error2.push(i)
+              stack2.length == 1 ? save.push({prefix: stack2[0], suffix: i}) : {};
+              stack2.length > 0 ? stack2.pop() : error2.push(i);
               break;
             default:
               break;
           }
         }
-        const resultArr = [...stack1, ...stack2, ...error1, ...error2];
+        return {textArr, stack1, stack2, error1, error2, save};
+      },
+      inputCheck (textArr, pairResult) {
+        const resultArr = [...pairResult.stack1, ...pairResult.stack2, ...pairResult.error1, ...pairResult.error2];
         if (resultArr.length > 0) {
-          alert('存在未闭合括号标签');
+          alert('存在未闭合括号标签, 请检查、修改后转调。');
           for (let i = 0; i < resultArr.length; i++) {
             textArr[resultArr[i]] = ` ->${textArr[resultArr[i]]}<- `;
           }
           this.inputText = textArr.join('');//更新提示后的输入文本
+          return false;
+        } else {
+          return  true;
         }
       },
-      inputFormat (inputText) {//处理输入数字谱格式
-        return this.baseFormat(inputText);
+      inputFormat (textArr, pairResult) {//处理输入数字谱格式
+        const pairArr = pairResult.save;
+        for (let i = 0; i < pairArr.length; i++) {
+          let prefixIndex = pairArr[i].prefix, suffixIndex = pairArr[i].suffix;
+          let flag = textArr[prefixIndex] + textArr[suffixIndex];//稍微生成下判断用标识
+          if ((suffixIndex - prefixIndex) > 1) {//如果标签之间非空。
+            // 去掉前后缀
+            textArr[prefixIndex] = '';
+            textArr[suffixIndex] = '';
+            for (let i = prefixIndex + 1; i < suffixIndex; i++) {
+              let ok = /((#|b)[1-7])|[1-7]/.test(textArr[i]);
+              textArr[i] = ok ? flag === '[]' ? `[${textArr[i]}]` : `(${textArr[i]})` : textArr[i];
+            }
+          }
+        }
+        return textArr.join('');
       },
-      outputFormat (resultText) {//处理输出数字谱格式
-        return resultText.replace(/\[.*\(.*\]/g, str => {
-
-        });
+      outputFormat (text) {//处理输出数字谱格式
+        // [()] ([]) <- 去掉
+        text = text.replace(/\[\(|\)\]|\(\[|\]\)/g, '');
+        let ok = /\]\[|\)\(/.test(text);
+        while (ok) {
+          text = text.replace(/\]\[|\)\(/g, '');
+          ok = /\]\[|\)\(/.test(text);
+        }
+        return text;
       },
       symbolConvert () {// () [] 高低音标识符互转
         this.isBracket = this.isBracket === '[]' ? '()' : '[]';
-      }
+      },
     },
   }
 </script>
