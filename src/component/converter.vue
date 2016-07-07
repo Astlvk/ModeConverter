@@ -9,24 +9,24 @@
     <!--这里是主要操作区  -->
     <div class="line-small">
       <!-- 调式选择 -->
-      <div class="xl6">
-        <div class="form-inline float-right">
+      <div class="xs6">
+        <div class="form-inline float-left">
           <div class="form-group">
-            <!-- 转调前 -->
+            转调前&nbsp&nbsp
             <select v-model="beforeMode" class="input selectWidth">
               <option v-for="(item, index) of modeMap" :value="index">1 = {{item}}</option>
             </select>
           </div>
-          <span class="text-big padding">转</span>
+          <!-- <span class="text-big padding">转</span> -->
           <div class="form-group">
-            <!-- 转调后 -->
+            转调后&nbsp&nbsp
             <select v-model="afterMode" class="input selectWidth">
               <option v-for="(item, index) of modeMap" :value="index">1 = {{item}}</option>
             </select>
           </div>
         </div>
       </div>
-      <div class="xl6">
+      <div class="xs6">
         <!--转换按钮  -->
         <div class="float-right">
           <button @click="symbolConvert" class="button" type="button">高音 = {{this.isBracket}}</button>
@@ -37,11 +37,11 @@
     <!-- ==========================分割线==========================  -->
     <div class="line-small margin-top">
       <!--转换与转换后显示内容  -->
-      <div class="xs6">
+      <div class="xs6 margin-bottom">
         <!--输入文本  -->
         <textarea v-model="inputText" class="input" rows="20"></textarea>
       </div>
-      <div class="xs6">
+      <div class="xs6 margin-bottom">
         <!-- 输出文本 -->
         <textarea v-model="outputText" class="input" rows='20' ></textarea>
       </div>
