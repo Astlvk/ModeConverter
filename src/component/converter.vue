@@ -1,60 +1,50 @@
 <style>
-  .headHeight {
-    height: 70px;
-  }
   .selectWidth {
     width: auto;
   }
 </style>
+
 <template>
   <div>
-    <div id="head" class="line-small headHeight">
-      <h1>Web数字谱转调器</h1>
-    </div>
-    <div id="body">
-      <!--这里是主要操作区  -->
-      <div class="line-small">
-        <!-- 调式选择 -->
-        <div class="xl6">
-          <div class="form-inline float-right">
-            <div class="form-group">
-              <!-- 转调前 -->
-              <select v-model="beforeMode" class="input border-blue selectWidth">
-                <option v-for="(item, index) of modeMap" :value="index">1 = {{item}}</option>
-              </select>
-            </div>
-            <span class="text-big padding">转</span>
-            <div class="form-group">
-              <!-- 转调后 -->
-              <select v-model="afterMode" class="input border-blue selectWidth">
-                <option v-for="(item, index) of modeMap" :value="index">1 = {{item}}</option>
-              </select>
-            </div>
+    <!--这里是主要操作区  -->
+    <div class="line-small">
+      <!-- 调式选择 -->
+      <div class="xl6">
+        <div class="form-inline float-right">
+          <div class="form-group">
+            <!-- 转调前 -->
+            <select v-model="beforeMode" class="input selectWidth">
+              <option v-for="(item, index) of modeMap" :value="index">1 = {{item}}</option>
+            </select>
           </div>
-        </div>
-        <div class="xl6">
-          <!--转换按钮  -->
-          <div class="float-right">
-            <button @click="symbolConvert" class="button border-blue" type="button">高音 = {{this.isBracket}}</button>
-            <button @click="start" class="button border-blue" type="button">开始转换</button>
+          <span class="text-big padding">转</span>
+          <div class="form-group">
+            <!-- 转调后 -->
+            <select v-model="afterMode" class="input selectWidth">
+              <option v-for="(item, index) of modeMap" :value="index">1 = {{item}}</option>
+            </select>
           </div>
         </div>
       </div>
-      <!-- ==========================分割线==========================  -->
-      <div class="line-small margin-top">
-        <!--转换与转换后显示内容  -->
-        <div class="xs6">
-          <!--输入文本  -->
-          <textarea v-model="inputText" class="input" rows="20"></textarea>
-        </div>
-        <div class="xs6">
-          <!-- 输出文本 -->
-          <textarea v-model="outputText" class="input" rows='20' ></textarea>
+      <div class="xl6">
+        <!--转换按钮  -->
+        <div class="float-right">
+          <button @click="symbolConvert" class="button" type="button">高音 = {{this.isBracket}}</button>
+          <button @click="start" class="button" type="button">开始转换</button>
         </div>
       </div>
     </div>
-    <div id="foot">
-      不明所以的页脚
+    <!-- ==========================分割线==========================  -->
+    <div class="line-small margin-top">
+      <!--转换与转换后显示内容  -->
+      <div class="xs6">
+        <!--输入文本  -->
+        <textarea v-model="inputText" class="input" rows="20"></textarea>
+      </div>
+      <div class="xs6">
+        <!-- 输出文本 -->
+        <textarea v-model="outputText" class="input" rows='20' ></textarea>
+      </div>
     </div>
   </div>
 </template>
