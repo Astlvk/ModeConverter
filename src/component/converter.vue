@@ -2,6 +2,14 @@
   .selectWidth {
     width: auto;
   }
+  textarea {
+    resize: none;
+    /*background-color: #D8BFD8;*/
+  }
+  textarea[readonly] {
+    background-color: white;
+    cursor: auto;
+  }
 </style>
 
 <template>
@@ -12,25 +20,35 @@
       <div class="xs6">
         <div class="form-inline float-left">
           <div class="form-group">
-            转调前&nbsp&nbsp
-            <select v-model="beforeMode" class="input selectWidth">
-              <option v-for="(item, index) of modeMap" :value="index">1 = {{item}}</option>
-            </select>
+            <div class="input-group">
+              <span class="addon">转调前</span>
+              <select v-model="beforeMode" class="input selectWidth">
+                <option v-for="(item, index) of modeMap" :value="index">1 = {{item}}</option>
+              </select>
+            </div>
           </div>
           <!-- <span class="text-big padding">转</span> -->
           <div class="form-group">
-            转调后&nbsp&nbsp
-            <select v-model="afterMode" class="input selectWidth">
-              <option v-for="(item, index) of modeMap" :value="index">1 = {{item}}</option>
-            </select>
+            <div class="input-group">
+              <span class="addon">转调后</span>
+              <select v-model="afterMode" class="input selectWidth">
+                <option v-for="(item, index) of modeMap" :value="index">1 = {{item}}</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
       <div class="xs6">
         <!--转换按钮  -->
-        <div class="float-right">
-          <button @click="symbolConvert" class="button" type="button">高音 = {{this.isBracket}}</button>
-          <button @click="start" class="button" type="button">开始转换</button>
+        <div class="form-inline float-right">
+          <!-- <button @click="symbolConvert" class="button" type="button">高音 = {{this.isBracket}}</button>
+          <button @click="start" class="button" type="button">开始转换</button> -->
+          <div class="form-group">
+            <button @click="symbolConvert" class="button" type="button">高音 = {{this.isBracket}}</button>
+          </div>
+          <div class="form-group">
+            <button @click="start" class="button" type="button">开始转换</button>
+          </div>
         </div>
       </div>
     </div>
@@ -39,11 +57,11 @@
       <!--转换与转换后显示内容  -->
       <div class="xs6 margin-bottom">
         <!--输入文本  -->
-        <textarea v-model="inputText" class="input" rows="20"></textarea>
+        <textarea v-model="inputText" @dblclick="selectAll($event)" class="input text-big text-black" rows="15" placeholder="输入, 双击全选"></textarea>
       </div>
       <div class="xs6 margin-bottom">
         <!-- 输出文本 -->
-        <textarea v-model="outputText" class="input" rows='20' ></textarea>
+        <textarea v-model="outputText" @dblclick="selectAll($event)" class="input text-big text-black" rows='15' placeholder="输出, 双击全选" readonly="readonly"></textarea>
       </div>
     </div>
   </div>
@@ -196,6 +214,9 @@
       },
       symbolConvert () {// () [] 高低音标识符互转
         this.isBracket = this.isBracket === '[]' ? '()' : '[]';
+      },
+      selectAll (event) {//文本全选
+        event.target.select();
       },
     },
   }
