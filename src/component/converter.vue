@@ -41,13 +41,11 @@
       <div class="xs6">
         <!--转换按钮  -->
         <div class="form-inline float-right">
-          <!-- <button @click="symbolConvert" class="button" type="button">高音 = {{this.isBracket}}</button>
-          <button @click="start" class="button" type="button">开始转换</button> -->
           <div class="form-group">
-            <button @click="symbolConvert" class="button" type="button">高音 = {{this.isBracket}}</button>
+            <button @click="symbolConvert" class="button bg" type="button">高音 = {{this.isBracket}}</button>
           </div>
           <div class="form-group">
-            <button @click="start" class="button" type="button">开始转换</button>
+            <button @click="start" class="button bg" type="button">开始转换</button>
           </div>
         </div>
       </div>
@@ -82,8 +80,6 @@
         afterMode: 0,
         inputText: '',
         outputText: '',
-        cacheText: '',
-        ok: true,
       }
     },
     methods: {
