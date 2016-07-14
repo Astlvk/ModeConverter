@@ -60,7 +60,7 @@
         <!--输入文本  -->
         <div class="input-group">
           <span @click="selectAll('in')" class="addon button button-small bg sign">全选</span>
-          <textarea v-model="inputText" class="input text-big text-black" id="in" rows="15" placeholder="输入"></textarea>
+          <textarea v-model="inputText" @dblclick="selectAll('in')" class="input text-big text-black" id="in" rows="15" placeholder="输入"></textarea>
         </div>
       </div>
       <div class="xs6 margin-bottom">
@@ -102,8 +102,8 @@
         let arr2 = this.inputText.split('\n');
         const error = [];
         for (let i = 0; i < arr1.length; i++) {//把输入按行分割，检查每行书否正确配对，并初始化每行的输入。
-          let cacheTextArr = arr1[i].match(/((#|b)[1-7])|[1-7]|.|\n/g);
-          let inputTextArr = arr2[i].match(/((#|b)[1-7])|[1-7]|.|\n/g);
+          let cacheTextArr = arr1[i].match(/((#|b)[1-7])|[1-7]|.|\n|/g);
+          let inputTextArr = arr2[i].match(/((#|b)[1-7])|[1-7]|.|\n|/g);
           let pairResult = this.pairCheck(cacheTextArr);
           error.push(...pairResult.stack1, ...pairResult.stack2, ...pairResult.error);
           arr2[i] = this.inputCheck(inputTextArr, pairResult);
