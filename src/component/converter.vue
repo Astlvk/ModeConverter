@@ -67,7 +67,7 @@
         <!-- 输出文本 -->
         <div class="input-group">
           <span @click="selectAll('out')" class="addon button button-small bg sign">全选</span>
-          <textarea v-model="outputText" class="input text-big text-black" id="out" rows='15' placeholder="输出" readonly="readonly"></textarea>
+          <textarea v-model="outputText" @dblclick="selectAll('out')" class="input text-big text-black" id="out" rows='15' placeholder="输出" readonly="readonly"></textarea>
         </div>
       </div>
     </div>
