@@ -2,6 +2,9 @@
   .selectWidth {
     width: auto;
   }
+  .sign {
+    cursor: pointer;
+  }
   textarea {
     resize: none;
     /*background-color: #D8BFD8;*/
@@ -55,11 +58,17 @@
       <!--转换与转换后显示内容  -->
       <div class="xs6 margin-bottom">
         <!--输入文本  -->
-        <textarea v-model="inputText" @dblclick="selectAll($event)" class="input text-big text-black" rows="15" placeholder="输入, 双击全选"></textarea>
+        <div class="input-group">
+          <span @click="selectAll('in')" class="addon button button-small bg sign">全选</span>
+          <textarea v-model="inputText" class="input text-big text-black" id="in" rows="15" placeholder="输入"></textarea>
+        </div>
       </div>
       <div class="xs6 margin-bottom">
         <!-- 输出文本 -->
-        <textarea v-model="outputText" @dblclick="selectAll($event)" class="input text-big text-black" rows='15' placeholder="输出, 双击全选" readonly="readonly"></textarea>
+        <div class="input-group">
+          <span @click="selectAll('out')" class="addon button button-small bg sign">全选</span>
+          <textarea v-model="outputText" class="input text-big text-black" id="out" rows='15' placeholder="输出" readonly="readonly"></textarea>
+        </div>
       </div>
     </div>
   </div>
@@ -261,8 +270,8 @@
       symbolConvert () {// () [] 高低音标识符互转
         this.isBracket = this.isBracket === '[]' ? '()' : '[]';
       },
-      selectAll (event) {//文本全选
-        event.target.select();
+      selectAll (id) {//文本全选
+        document.getElementById(id).select();
       },
     },
   }
