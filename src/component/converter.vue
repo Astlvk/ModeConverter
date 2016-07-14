@@ -83,27 +83,56 @@
         inputText: '',
         outputText: '',
         cacheText: '',
+        ok: true,
       }
     },
     methods: {
       start () {// button绑定的方法
+        // this.allTextHandler();
+        this.lineTextHandler();
+      },
+      lineTextHandler () {//以行为单位处理文本
+        let cacheText = this.baseFormat(this.inputText);
+        let arr1 = cacheText.split('\n');
+        let arr2 = this.inputText.split('\n');
+        const error = [];
+        for (let i = 0; i < arr1.length; i++) {//把输入按行分割，检查每行书否正确配对，并初始化每行的输入。
+          let cacheTextArr = arr1[i].match(/((#|b)[1-7])|[1-7]|.|\n/g);
+          let inputTextArr = arr2[i].match(/((#|b)[1-7])|[1-7]|.|\n/g);
+          let pairResult = this.pairCheck(cacheTextArr);
+          error.push(...pairResult.stack1, ...pairResult.stack2, ...pairResult.error);
+          arr2[i] = this.inputCheck(inputTextArr, pairResult);
+          arr1[i] = this.inputFormat(cacheTextArr, pairResult);
+        }
+        if (error.length > 0) {
+          alert('存在未正确闭合的括号标签\n转调结果将会异常, 请检查、修改后转调。');
+        }
+        this.inputText = arr2.join('\n');//更新输入文本
+        cacheText = arr1.join('\n');
+        cacheText = this.convert(cacheText);
+        this.outputText = this.outputFormat(cacheText);
+      },
+      allTextHandler () {//全文本为单位处理
         let cacheText = this.baseFormat(this.inputText);
         let cacheTextArr = cacheText.match(/((#|b)[1-7])|[1-7]|.|\n/g);
         let inputTextArr = this.inputText.match(/((#|b)[1-7])|[1-7]|.|\n/g);
         let pairResult = this.pairCheck(cacheTextArr);
-        let ok = this.inputCheck(inputTextArr, pairResult);
+        const error = [...pairResult.stack1, ...pairResult.stack2, ...pairResult.error];
+        if (error.length > 0) {
+          alert('存在未正确闭合的括号标签\n转调结果将会异常, 请检查、修改后转调。');
+        }
+        this.inputText = this.inputCheck(inputTextArr, pairResult);
         cacheText = this.inputFormat(cacheTextArr, pairResult);
         cacheText = this.convert(cacheText);
         this.outputText = this.outputFormat(cacheText);
       },
-      convert (text) {
+      convert (text) {//转换方法, 调用转换实现方法
         return text.replace(/((#|b)[1-7])|[1-7]/g, str => {
           let rule = this.beforeMode - this.afterMode;
           return this.convertImpl(str, rule, this.indexMap);
         });
       },
-      convertImpl (str, rule, indexMap) {
-        // 转换方法, 接收转换字符和转换规则转换后输出转换后字符
+      convertImpl (str, rule, indexMap) {// 转换实现方法, 接收转换字符和转换规则转换后输出转换后字符
         let strIndex;//定义待转音级下标容器
         for (let i = 0; i < indexMap.length; i++) {// 获取音级在逻辑音程表(indexMap)中的位置
             // for (let j = 0; j < indexMap[i].length; j++) {
@@ -148,7 +177,30 @@
           return str === '（' ? '(' : str === '【' ? '[' : str === '）' ? ')' : str === '】' ? ']' : 'Format error';
         });
       },
-      pairCheck (textArr) {//检查输入谱是否有未配对括号标签, 如果有则提示，且标识出大致位置.并存入根配对标签下标。
+      subPairFun (a, b, error, save, i) {//抽取出的配对检测的公用逻辑
+        if (a.length > 0) {
+          let cacheArr = [];
+          for (let j = 0; j < b.length; j++) {
+            if (b[j] > a[a.length - 1] && b[j] < i) {
+              error.push(b[j]);
+              cacheArr.push(b[j]);
+            }
+          }
+          for (let i = 0; i < cacheArr.length; i++) {
+            for (let j = 0; j < b.length; j++) {
+              if (b[j] === cacheArr[i]) {
+                b.splice(j, 1);
+                break;
+              }
+            }
+          }
+          a.length == 1 ? save.push({prefix: a[0], suffix: i}) : {};
+          a.pop();
+        } else {
+          error.push(i);
+        }
+      },
+      pairCheck (textArr) {//检查输入谱是否有未配对括号标签, 如果有则保存, 并存入根配对标签下标。
         const stack1 = [], stack2 = [], error = [], save = [];
         for (let i = 0; i < textArr.length; i++) {//配对括号标签
           switch (textArr[i]) {
@@ -156,27 +208,7 @@
               stack1.push(i);
               break;
             case ']':
-              if (stack1.length > 0) {
-                let cacheArr = [];
-                for (let j = 0; j < stack2.length; j++) {
-                  if (stack2[j] > stack1[stack1.length - 1] && stack2[j] < i) {
-                    error.push(stack2[j]);
-                    cacheArr.push(stack2[j]);
-                  }
-                }
-                for (let i = 0; i < cacheArr.length; i++) {
-                  for (let j = 0; j < stack2.length; j++) {
-                    if (stack2[j] === cacheArr[i]) {
-                      stack2.splice(j, 1);
-                      break;
-                    }
-                  }
-                }
-                stack1.length == 1 ? save.push({prefix: stack1[0], suffix: i}) : {};
-                stack1.pop();
-              } else {
-                error.push(i);
-              }
+              this.subPairFun(stack1, stack2, error, save, i);
               // stack1.length == 1 ? save.push({prefix: stack1[0], suffix: i}) : {};
               // stack1.length > 0 ? stack1.pop() : error1.push(i);
               break;
@@ -184,27 +216,7 @@
               stack2.push(i);
               break;
             case ')':
-              if (stack2.length > 0) {
-                let cacheArr = [];
-                for (let j = 0; j < stack1.length; j++) {
-                  if (stack1[j] > stack2[stack2.length - 1] && stack1[j] < i) {
-                    error.push(stack1[j]);
-                    cacheArr.push(stack1[j]);
-                  }
-                }
-                for (let i = 0; i < cacheArr.length; i++) {
-                  for (let j = 0; j < stack1.length; j++) {
-                    if (stack1[j] === cacheArr[i]) {
-                      stack1.splice(j, 1);
-                      break;
-                    }
-                  }
-                }
-                stack2.length == 1 ? save.push({prefix: stack2[0], suffix: i}) : {};
-                stack2.pop();
-              } else {
-                error.push(i);
-              }
+              this.subPairFun(stack2, stack1, error, save, i);
               // stack2.length == 1 ? save.push({prefix: stack2[0], suffix: i}) : {};
               // stack2.length > 0 ? stack2.pop() : error2.push(i);
               break;
@@ -212,22 +224,16 @@
               break;
           }
         }
-        // return {textArr, stack1, stack2, error1, error2, save};
-        return {textArr, stack1, stack2, error, save};
+        return {stack1, stack2, error, save};
       },
-      inputCheck (textArr, pairResult) {
-        // const resultArr = [...pairResult.stack1, ...pairResult.stack2, ...pairResult.error1, ...pairResult.error2];
+      inputCheck (textArr, pairResult) {//根据配对检测结果对未配对标签添加提示, 返回提示后文本
         const resultArr = [...pairResult.stack1, ...pairResult.stack2, ...pairResult.error];
         if (resultArr.length > 0) {
-          alert('存在未正确闭合的括号标签\n转调结果将会异常, 请检查、修改后转调。');
           for (let i = 0; i < resultArr.length; i++) {
             textArr[resultArr[i]] = `>${textArr[resultArr[i]]}`;
           }
-          this.inputText = textArr.join('');//更新提示后的输入文本
-          return false;
-        } else {
-          return  true;
         }
+        return textArr.join('')//返回添加提示后的输入文本
       },
       inputFormat (textArr, pairResult) {//处理输入数字谱格式
         const pairArr = pairResult.save;
