@@ -27,6 +27,7 @@ export default {
   },
   devServer: {
     // contentBase: 'index/'
+    // hot: true,
     inline : true,
 		host : 'localhost',
 		port : '8090'
@@ -49,6 +50,7 @@ export default {
         warnings: false
       }
     }),
+    // new webpack.HotModuleReplacementPlugin(),
     // new webpack.optimize.MinChunkSizePlugin(minSize),//压缩插件，用法未研究
   ],
 }
