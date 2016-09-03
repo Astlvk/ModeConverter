@@ -1,4 +1,4 @@
-import Vue from 'vue/dist/vue.js'
+import Vue from 'vue'
 import mainView from './component/mainView'
 const app = new Vue({
   el: '#app',
