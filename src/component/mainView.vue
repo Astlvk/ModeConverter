@@ -21,8 +21,13 @@
 <script>
   import converter from './converter'
   export default {
+    data () {
+      return {
+        message: 'Hello Vue2.0',
+      }
+    },
     components: {
       converter,
-    }
+    },
   }
 </script>
