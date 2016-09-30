@@ -4,22 +4,21 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev-hot": "webpack-dev-server --hot",
+    "dev": "webpack-dev-server"
   },
   "author": "Astlvk",
   "license": "ISC",
   "devDependencies": {
-    "babel-core": "^6.10.4",
-    "babel-loader": "^6.2.4",
-    "babel-plugin-transform-runtime": "^6.9.0",
-    "babel-preset-es2015": "^6.9.0",
-    "babel-runtime": "^6.9.2",
+    "babel-core": "^6.14.0",
+    "babel-loader": "^6.2.5",
+    "babel-plugin-transform-runtime": "^6.15.0",
+    "babel-preset-es2015": "^6.14.0",
+    "babel-runtime": "^6.11.6",
     "css-loader": "^0.23.1",
-    "vue": "^2.0.0-alpha.6",
-    "vue-hot-reload-api": "^2.0.2",
-    "vue-html-loader": "^1.2.3",
-    "vue-loader": "^9.0.3",
-    "vue-style-loader": "^1.0.0",
+    "vue": "^2.0.0-rc.8",
+    "vue-loader": "^9.5.0",
     "webpack": "^1.13.1",
     "webpack-dev-server": "^1.14.1"
   }
