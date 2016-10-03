@@ -164,6 +164,11 @@
           Lprefix = '[';
           Lsuffix = ']';
         }
+        if (str === '#7') {
+          result = Hprefix + result + Hsuffix;
+        } else if (str === 'b1') {
+          result = Lprefix + result + Lsuffix;
+        }
         if (range === 'high') {
           result = Hprefix + result + Hsuffix;
         } else if (range === 'low') {
